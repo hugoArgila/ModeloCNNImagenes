@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Dígitos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Predicción de Dígitos</h1>
+
+    <div class="upload-section">
+        <h2>Subir Imagen</h2>
+        <form method="POST" action="/" enctype="multipart/form-data">
+            <input type="file" name="image" required>
+            <input type="submit" value="Predecir">
+        </form>
+        {% if filename %}
+            <h2>Imagen Subida:</h2>
+            <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Imagen Subida" class="uploaded-image">
+        {% endif %}
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+
+    {% if predictions %}
+    <div class="results-section">
+        <h2>Predicciones de Contornos:</h2>
+        {% if predictions|length > 0 %}
+            {% for prediction in predictions %}
+            <div class="prediction-item">
+                <img src="data:image/png;base64,{{ prediction.processed_image }}" alt="Contorno Procesado">
+                <p>Contorno {{ loop.index }}: Predicción = <strong>{{ prediction.digit }}</strong> (Confianza: {{ '%.2f' % (prediction.confidence * 100) }}%)</p>
+            </div>
+            {% endfor %}
+            <div class="final-prediction">
+                Predicción Final: <strong>{{ final_prediction }}</strong>
+            </div>
+        {% else %}
+            <p>No se encontraron dígitos en la imagen.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</body>
+</html>
